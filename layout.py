@@ -73,10 +73,6 @@ COLUMNS = [
     Col("Toelichting_LE", "Toelichting", 13.0),
     Col("toelichtin_algemeen", "Toelichting algemeen", 13.0),
     Col("Netcongestie", "Netcongestie", 13.0),
-    Col("Kolom2", None, 13.0),
-    Col("Kolom3", None, 13.0),
-    Col("Kolom4", None, 13.0),
-    Col("Kolom5", None, 13.0),
 ]
 
 # Merged group labels in row 1: (label, first column header, last column header).

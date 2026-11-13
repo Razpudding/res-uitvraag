@@ -2,7 +2,7 @@
 
 Tooling for the half-yearly data request ("uitvraag") to the municipalities of RES West-Overijssel: generating the request files from the RES monitor, and bringing the returned answers back into the monitor in a reviewed, traceable way.
 
-**Status (2026-10-29):** step 1 (generate) works — checked for Hardenberg against the hand-made najaar 2026 template (see *Status and next steps*). Steps 2–4 are not built yet.
+**Status (2026-11-13):** step 1 (generate) works — checked for Hardenberg against the hand-made najaar 2026 template (see *Status and next steps*). Steps 2–4 are not built yet.
 
 ## Quick start
 
@@ -49,7 +49,7 @@ The template turns out to be a purely mechanical derivation of the monitor sheet
 - **One file per municipality, not one file with a selector.** A formula-based filter (`FILTER`) produces read-only output, an auto-filter driven by a dropdown needs a macro (`.xlsm`, often blocked by municipal IT), and either way every municipality would receive every other municipality's data.
 - **Change detection by diff, not by red marking.** Red marking stays in the instructions as a courtesy, but the collect step compares values, so unmarked changes are still caught.
 - **The monitor is only read by the generator, never saved by Python.** The monitor contains slicers, pivots and data-validation extensions that `openpyxl` drops on save. The apply step must therefore write values without round-tripping the workbook through `openpyxl` (approach to be decided).
-- **The layout is defined in code, not in a seed file.** `COLUMNS` / `GROUPS` in `layout.py` define every column (header, monitor source, width, number format, units, hidden). They were taken once from `Projectoverzicht template najaar 2026.xlsx`; that file is no longer used. Deviations from it: `RES regio` removed; `Fase_ID` / `Fase` removed (they only repeated `STATUS RES`, and a single status field keeps the returned values unambiguous); `Vollasturen` added after `Vermogen`; `Gemeente` and the coordinates hidden; `Kolom1` replaced by the monitor's `Netcongestie`; dates pinned to Dutch month names (`[$-413]mmm-yy`); `Verwachte realisatie` formatted as a year; empty monitor cells stay empty instead of `0`.
+- **The layout is defined in code, not in a seed file.** `COLUMNS` / `GROUPS` in `layout.py` define every column (header, monitor source, width, number format, units, hidden). They were taken once from `Projectoverzicht template najaar 2026.xlsx`; that file is no longer used. Deviations from it: `RES regio` removed; `Fase_ID` / `Fase` removed (they only repeated `STATUS RES`, and a single status field keeps the returned values unambiguous); `Vollasturen` added after `Vermogen`; `Gemeente` and the coordinates hidden; `Kolom1` replaced by the monitor's `Netcongestie`; the empty placeholders `Kolom2`–`Kolom5` (the monitor's unused `Dummy_2`–`Dummy_5`) removed; dates pinned to Dutch month names (`[$-413]mmm-yy`); `Verwachte realisatie` formatted as a year; empty monitor cells stay empty instead of `0`.
 - **Derived from the monitor, with these transformations** (matching the existing template):
   - stopped projects (`0 Project gestopt`) are skipped entirely;
   - the column set is that of `COLUMNS` in `layout.py` — municipalities see all of those columns, including derived values; other monitor columns are not exported;
@@ -61,17 +61,17 @@ The template turns out to be a purely mechanical derivation of the monitor sheet
 
 **Done**
 
-- `generate.py` + `layout.py` produce the data tab. Decided: stopped projects are skipped; municipalities see all template columns; empty cells stay empty.
+- `generate.py` + `layout.py` produce the data tab. Decided: stopped projects are skipped; municipalities see all columns in `COLUMNS`; empty cells stay empty; only `STATUS RES` (no `Fase_ID` / `Fase`); `Vollasturen` included; no `Kolom2`–`Kolom5`; only `Nr.` and `Projectnaam` frozen.
+- `--all` generates 11 files with 76 projects in total, which equals the number of active projects in the monitor.
 - Verified for Hardenberg against the najaar 2026 template: same 14 projects, and every cell identical except (a) 207 cells where the template showed `0` and the generated file is empty, (b) 14 real differences that are all newer monitor data — 12 coordinates corrected on 2026-10-20 (IDs 17, 18, 24, 94, 95, 119), ID 95's name (template still had "(2)"), and ID 20's Verwachte realisatie (the template showed 2022 as the date 1905-07-14).
 
 **Next, in order**
 
-1. Run `--all` and spot-check a few of the 11 files in Excel (only Hardenberg has been checked so far).
+1. Spot-check a few of the 11 files in Excel (only Hardenberg has been checked in detail).
 2. Add the explanation tab once the text is supplied.
-3. Decide whether to drop the empty placeholder columns `Kolom2`–`Kolom5` (one line each in `layout.py`).
-4. Decide whether the sheet name `Data Veld+Wind` is right (the monitor sheet still carries `(Q2'26)`).
-5. Build step 2 (collect): save a snapshot of what was sent next to the generated files, then diff returned files against it.
-6. Build steps 3–4 (review list, apply to monitor) — first choose how to write into the monitor without openpyxl dropping its slicers/pivots (e.g. via Excel itself / xlwings, or a direct edit of the cell XML).
+3. Decide whether the sheet name `Data Veld+Wind` is right (the monitor sheet still carries `(Q2'26)`).
+4. Build step 2 (collect): save a snapshot of what was sent next to the generated files, then diff returned files against it.
+5. Build steps 3–4 (review list, apply to monitor) — first choose how to write into the monitor without openpyxl dropping its slicers/pivots (e.g. via Excel itself / xlwings, or a direct edit of the cell XML).
 
 ## Data and privacy
 
