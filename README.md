@@ -2,7 +2,7 @@
 
 Tooling for the half-yearly data request ("uitvraag") to the municipalities of RES West-Overijssel: generating the request files from the RES monitor, and bringing the returned answers back into the monitor in a reviewed, traceable way.
 
-**Status (2026-11-13):** step 1 (generate) works — checked for Hardenberg against the hand-made najaar 2026 template (see *Status and next steps*). Steps 2–4 are not built yet.
+**Status (2026-11-13):** step 1 (generate) is done — all 11 files are generated, Hardenberg checked against the hand-made najaar 2026 template (see *Status and next steps*). Steps 2–4 are not built yet.
 
 ## Quick start
 
@@ -37,9 +37,7 @@ The template turns out to be a purely mechanical derivation of the monitor sheet
  monitor (.xlsx) ◀──4. apply── reviewed change list ◀──3. review── 2. collect ◀─┘
 ```
 
-1. **Generate** — read the monitor and write one file per municipality, containing:
-   - a *data* tab with only that municipality's active projects (built);
-   - an *explanation* tab: what we ask, how to mark changes, a column legend, contact details (not built yet — waiting for the text).
+1. **Generate** — read the monitor and write one file per municipality, with a single sheet (`Data Veld+Wind`) holding only that municipality's active projects. The explanation (what we ask, how to mark changes, contact details) goes in the accompanying email, not in the file.
 2. **Collect** — read all returned files and compare every cell with what was sent (a snapshot of the sent values is kept alongside the generated files). Output: a change list per project and field (old → new), plus anomalies (unparseable values, new rows, deleted rows).
 3. **Review** — the change list is checked by a person. Nothing reaches the monitor without that review.
 4. **Apply** — approved changes are written into the monitor, cells marked so changes are traceable.
@@ -61,17 +59,15 @@ The template turns out to be a purely mechanical derivation of the monitor sheet
 
 **Done**
 
-- `generate.py` + `layout.py` produce the data tab. Decided: stopped projects are skipped; municipalities see all columns in `COLUMNS`; empty cells stay empty; only `STATUS RES` (no `Fase_ID` / `Fase`); `Vollasturen` included; no `Kolom2`–`Kolom5`; only `Nr.` and `Projectnaam` frozen.
+- `generate.py` + `layout.py` produce the data tab. Decided: stopped projects are skipped; municipalities see all columns in `COLUMNS`; empty cells stay empty; only `STATUS RES` (no `Fase_ID` / `Fase`); `Vollasturen` included; no `Kolom2`–`Kolom5`; only `Nr.` and `Projectnaam` frozen; sheet name `Data Veld+Wind` (without the monitor's `(Q2'26)`); explanation sent by email rather than as a tab.
 - `--all` generates 11 files with 76 projects in total, which equals the number of active projects in the monitor.
 - Verified for Hardenberg against the najaar 2026 template: same 14 projects, and every cell identical except (a) 207 cells where the template showed `0` and the generated file is empty, (b) 14 real differences that are all newer monitor data — 12 coordinates corrected on 2026-10-20 (IDs 17, 18, 24, 94, 95, 119), ID 95's name (template still had "(2)"), and ID 20's Verwachte realisatie (the template showed 2022 as the date 1905-07-14).
 
 **Next, in order**
 
 1. Spot-check a few of the 11 files in Excel (only Hardenberg has been checked in detail).
-2. Add the explanation tab once the text is supplied.
-3. Decide whether the sheet name `Data Veld+Wind` is right (the monitor sheet still carries `(Q2'26)`).
-4. Build step 2 (collect): save a snapshot of what was sent next to the generated files, then diff returned files against it.
-5. Build steps 3–4 (review list, apply to monitor) — first choose how to write into the monitor without openpyxl dropping its slicers/pivots (e.g. via Excel itself / xlwings, or a direct edit of the cell XML).
+2. Build step 2 (collect): save a snapshot of what was sent next to the generated files, then diff returned files against it.
+3. Build steps 3–4 (review list, apply to monitor) — first choose how to write into the monitor without openpyxl dropping its slicers/pivots (e.g. via Excel itself / xlwings, or a direct edit of the cell XML).
 
 ## Data and privacy
 
