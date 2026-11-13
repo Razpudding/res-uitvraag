@@ -49,12 +49,11 @@ The template turns out to be a purely mechanical derivation of the monitor sheet
 - **One file per municipality, not one file with a selector.** A formula-based filter (`FILTER`) produces read-only output, an auto-filter driven by a dropdown needs a macro (`.xlsm`, often blocked by municipal IT), and either way every municipality would receive every other municipality's data.
 - **Change detection by diff, not by red marking.** Red marking stays in the instructions as a courtesy, but the collect step compares values, so unmarked changes are still caught.
 - **The monitor is only read by the generator, never saved by Python.** The monitor contains slicers, pivots and data-validation extensions that `openpyxl` drops on save. The apply step must therefore write values without round-tripping the workbook through `openpyxl` (approach to be decided).
-- **The layout is defined in code, not in a seed file.** `COLUMNS` / `GROUPS` in `layout.py` define every column (header, monitor source, width, number format, units, hidden). They were taken once from `Projectoverzicht template najaar 2026.xlsx`; that file is no longer used. Deviations from it: `RES regio` removed; `Gemeente` and the coordinates hidden; `Kolom1` replaced by the monitor's `Netcongestie`; dates pinned to Dutch month names (`[$-413]mmm-yy`); `Verwachte realisatie` formatted as a year; empty monitor cells stay empty instead of `0`.
+- **The layout is defined in code, not in a seed file.** `COLUMNS` / `GROUPS` in `layout.py` define every column (header, monitor source, width, number format, units, hidden). They were taken once from `Projectoverzicht template najaar 2026.xlsx`; that file is no longer used. Deviations from it: `RES regio` removed; `Fase_ID` / `Fase` removed (they only repeated `STATUS RES`, and a single status field keeps the returned values unambiguous); `Vollasturen` added after `Vermogen`; `Gemeente` and the coordinates hidden; `Kolom1` replaced by the monitor's `Netcongestie`; dates pinned to Dutch month names (`[$-413]mmm-yy`); `Verwachte realisatie` formatted as a year; empty monitor cells stay empty instead of `0`.
 - **Derived from the monitor, with these transformations** (matching the existing template):
   - stopped projects (`0 Project gestopt`) are skipped entirely;
-  - the column set is exactly that of the current template (najaar 2026) — municipalities see all of those columns, including derived values; monitor-only columns (e.g. `Vollasturen`) are not exported;
+  - the column set is that of `COLUMNS` in `layout.py` — municipalities see all of those columns, including derived values; other monitor columns are not exported;
   - formulas are flattened to values;
-  - `STATUS RES` is split into `Fase_ID` and `Fase`;
   - the monitor's column A (internal notes such as "geen reactie") is **never** exported;
   - empty cells stay empty instead of the monitor's `0` placeholder.
 

@@ -19,7 +19,7 @@ GENERAL = "General"
 @dataclass
 class Col:
     header: str
-    source: str | None      # monitor header; None = exported empty; "=fase_id"/"=fase" derived
+    source: str | None      # monitor header; None = exported empty
     width: float
     fmt: str = GENERAL
     units: str | None = None
@@ -37,8 +37,6 @@ COLUMNS = [
     Col("Y_coordinaat", "Y_coordinaat", 11.4, hidden=True),
     Col("Type", "Type", 13.4),
     Col("STATUS RES", "STATUS RES", 22.2),
-    Col("Fase_ID", "=fase_id", 6.8),
-    Col("Fase", "=fase", 18.2),
     Col("F1", "F1", 9.2, DATE),
     Col("F2", "F2", 9.2, DATE),
     Col("F3", "F3", 9.2, DATE),
@@ -48,6 +46,7 @@ COLUMNS = [
     Col("Verwachte realisatie", "verwachte_realisatie", 13.8, YEAR),
     Col("Slaagkans", "Slaagkans", 13.0, PCT, "%"),
     Col("Vermogen", "Vermogen", 21.2, NUM, "MW"),
+    Col("Vollasturen", "Vollasturen", 13.0, INT, "uur_per_jaar"),
     Col("Productie", "Productie", 20.8, NUM, "GWh_per_jaar"),
     Col("Prognose_GWh", "Prognose_GWh", 14.8, NUM, "GWh_per_jaar"),
     Col("Energie", "Energie", 15.4, NUM, "TJ_per_jaar"),
@@ -87,7 +86,7 @@ GROUPS = [
     ("Productie", "Verwachte realisatie", "Prognose_GWh"),
 ]
 NOTE = ("B1", "Wijzigingen graag markeren in ROOD")
-FREEZE_AT = "STATUS RES"     # columns left of this one, and rows above the data, stay visible
+FREEZE_AT = "Gemeente"       # columns left of this one (Nr., Projectnaam), and rows above the data, stay visible
 
 FONT = Font(name="Verdana", size=8)
 HEADER_FONT = Font(name="Verdana", size=8, bold=True)

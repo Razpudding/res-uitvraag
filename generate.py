@@ -46,7 +46,7 @@ def read_projects(monitor_path):
     wb = openpyxl.load_workbook(monitor_path, data_only=True)
     ws = wb[MONITOR_SHEET]
     cols = monitor_columns(ws)
-    missing = {c.source for c in COLUMNS if c.source and not c.source.startswith("=")} - set(cols)
+    missing = {c.source for c in COLUMNS if c.source} - set(cols)
     if missing:
         raise SystemExit(f"Monitor is missing columns: {sorted(missing)}")
     projects = []
@@ -62,14 +62,10 @@ def read_projects(monitor_path):
 
 
 def build_row(project):
-    fase_id, _, fase = str(project["STATUS RES"]).strip().partition(" ")
-    derived = {"=fase_id": fase_id, "=fase": fase.strip()}
     row = []
     for col in COLUMNS:
         if col.source is None:
             row.append(None)
-        elif col.source in derived:
-            row.append(derived[col.source])
         else:
             v = project[col.source]
             row.append(v.strip() if isinstance(v, str) else v)
